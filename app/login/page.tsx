@@ -1,6 +1,8 @@
 import React from 'react'
 
-const login = () => {
+type Props = {}
+
+const login = (props: Props) => {
 	return (
 		<div>Вы открыли страницу неправильно</div>
 	)

