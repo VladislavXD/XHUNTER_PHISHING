@@ -2,7 +2,7 @@ import React from 'react'
 
 const login = () => {
 	return (
-		<div>Вы страницу неправильно</div>
+		<div>Вы открыли страницу неправильно</div>
 	)
 }
 
