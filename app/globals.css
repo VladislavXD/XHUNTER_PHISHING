@@ -1,26 +1,420 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,600,700");
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Nunito", sans-serif;
+  color: rgba(0, 0, 0, 0.7);
+  background: #f7f7f7;
+}
+
+.container {
+  height: 200vh;
+  background-image: url(https://images.unsplash.com/photo-1538137524007-21e48fa42f3f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=ac9fa0975bd2ebad7afd906c5a3a15ab&auto=format&fit=crop&w=1834&q=80);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.scroll-down {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 100;
+  background: rgba(30, 30, 30, 0.7);
+  padding: 32px 0 48px 0;
+}
+.scroll-down .scroll-text {
+  color: #8c7569;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.scroll-down svg {
+  margin-bottom: 18px;
+  width: 52px;
+  fill: currentColor;
+}
+.scroll-down .modal-button {
+  background: #fff;
+  color: #23272f;
+  border: none;
+  border-radius: 30px;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 16px 48px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.16);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.scroll-down .modal-button:hover {
+  background: #f7f7f7;
+  color: #4e54c8;
+}
+
+.scroll-down-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 101;
+}
+.scroll-text {
+  color: #8c7569;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.scroll-down-center svg {
+  width: 52px;
+  fill: currentColor;
+}
+
+.scroll-down-btn {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  background: rgba(30, 30, 30, 0.7);
+  padding: 12px 0 24px 0;
+}
+.scroll-down-btn .modal-button {
+  background: #fff;
+  color: #23272f;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 10px 32px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.scroll-down-btn .modal-button:hover {
+  background: #f7f7f7;
+  color: #4e54c8;
+}
+
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(51, 51, 51, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+  z-index: 200;
+}
+.modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-container {
+  display: flex;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 700px;
+  width: 100%;
+  transform: translateY(100px) scale(0.4);
+  opacity: 0;
+  transition: all 0.6s;
+}
+.modal.is-open .modal-container {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.modal-left {
+  flex: 1;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 0.5s;
+}
+.modal.is-open .modal-left {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+
+.modal-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.modal-desc {
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+  color: #555;
+}
+
+.input-block {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+.input-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-family: "Nunito", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  color: #8c7569;
+  transition: 0.3s;
+  margin-bottom: 6px;
+}
+.input-block input {
+  outline: 0;
+  border: 0;
+  padding: 4px 0 0;
+  font-size: 14px;
+  font-family: "Nunito", sans-serif;
+  background: #f7f7f7;
+}
+.input-block input::placeholder {
+  color: #ccc;
+  opacity: 1;
+}
+.input-block:focus-within {
+  border-color: #8c7569;
+}
+.input-block:focus-within .input-label {
+  color: #8c7569;
+}
+
+.input-button {
+  padding: 12px 0;
+  width: 100%;
+  background: linear-gradient(90deg, #4e54c8, #8f94fb);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.input-button:hover {
+  background: linear-gradient(90deg, #8f94fb, #4e54c8);
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.forgot {
+  color: #4e54c8;
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
+.sign-up {
+  text-align: center;
+  margin-top: 18px;
+  color: #888;
+}
+.sign-up a {
+  color: #4e54c8;
+  text-decoration: underline;
+}
+
+.modal-right {
+  flex: 1;
+  background: #23272f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(2);
+  transition: transform 1.2s;
+}
+.modal.is-open .modal-right img {
+  transform: scale(1);
+}
+
+.icon-button.close-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 2rem;
+  color: #8c7569;
+}
+
+.error {
+  color: #ff6b6b;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.success {
+  color: #4eea8a;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* Компактные стили для модального окна */
+.compact-modal {
+  max-width: 370px;
+  min-width: 0;
+  width: 98vw;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 0;
+}
+.modal-container.compact-modal {
+  display: flex;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 700px;
+  width: 100%;
+  transform: translateY(100px) scale(0.4);
+  opacity: 0;
+  transition: all 0.6s;
+}
+.modal.is-open .modal-container.compact-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+.compact-left {
+  flex: 1;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 0.5s;
+}
+.modal.is-open .compact-left {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+.compact-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.compact-input {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+.compact-btn {
+  padding: 12px 0;
+  width: 100%;
+  background: linear-gradient(90deg, #4e54c8, #8f94fb);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.compact-btn:hover {
+  background: linear-gradient(90deg, #8f94fb, #4e54c8);
+}
+.compact-error, .compact-success {
+  color: #ff6b6b;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.compact-success {
+  color: #4eea8a;
+}
+.compact-sign {
+  text-align: center;
+  margin-top: 18px;
+  color: #888;
+}
+.compact-sign a {
+  color: #4e54c8;
+  text-decoration: underline;
+}
+.compact-right {
+  flex: 1;
+  background: #23272f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.compact-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(2);
+  transition: transform 1.2s;
+}
+.modal.is-open .compact-right img {
+  transform: scale(1);
+}
+@media (max-width: 900px) {
+  .compact-modal {
+    flex-direction: column;
+    max-width: 95vw;
+  }
+  .compact-right {
+    height: 200px;
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .compact-left {
+    padding: 24px 12px;
+  }
+  .compact-title {
+    font-size: 1.3rem;
+  }
 }
